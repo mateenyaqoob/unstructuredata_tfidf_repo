@@ -1,0 +1,50 @@
+TF-IDF Class Activity - Step 4: Query Similarity Challenge
+Student file: tfidf_activity_class_25i8033 
+====================================================================
+Matrix shape: (10, 537)
+Vocabulary size: 537
+Vectorizer: TfidfVectorizer(stop_words='english') | Similarity: cosine
+Documents ranked by cosine similarity, highest first.
+
+=== Query: 'renewable energy and climate policy' ===
+  Climate Change         0.323
+  Economics Inflation    0.095
+  Gardening Vegetables   0.048
+  AI in Healthcare       0.000
+  Basketball Strategy    0.000
+  Italian Pasta          0.000
+  Space Exploration      0.000
+  Cybersecurity          0.000
+  Music Theory           0.000
+  Public Health          0.000
+  -> top result: Climate Change   (expected: Climate Change)   OK
+
+=== Query: 'password security and phishing' ===
+  Cybersecurity          0.176
+  AI in Healthcare       0.000
+  Climate Change         0.000
+  Basketball Strategy    0.000
+  Italian Pasta          0.000
+  Space Exploration      0.000
+  Music Theory           0.000
+  Gardening Vegetables   0.000
+  Economics Inflation    0.000
+  Public Health          0.000
+  -> top result: Cybersecurity   (expected: Cybersecurity)   OK
+
+=== Query: 'healthy sleep exercise and diet' ===
+  Public Health          0.285
+  Gardening Vegetables   0.045
+  AI in Healthcare       0.000
+  Climate Change         0.000
+  Basketball Strategy    0.000
+  Italian Pasta          0.000
+  Space Exploration      0.000
+  Cybersecurity          0.000
+  Music Theory           0.000
+  Economics Inflation    0.000
+  -> top result: Public Health   (expected: Public Health)   OK
+
+Observation: for each query the expected document ranks first. Documents that share no
+words with the query score exactly 0.000, because TF-IDF matches words, not meaning.
+Unit tests (pytest -q): 3 passed in 1.23s
