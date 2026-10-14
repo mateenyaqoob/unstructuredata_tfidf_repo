@@ -1,32 +1,52 @@
-# TF-IDF Class Activity 
-A hands-on, programming-based classroom activity for teaching **TF-IDF** and **cosine similarity** using 10 long-text documents.
+# TF-IDF Class Activity
 
-## 🎯 Learning Objectives
-By the end of this activity, students will be able to:
-- Explain Term Frequency (TF), Inverse Document Frequency (IDF), and TF-IDF.
-- Build a TF-IDF matrix using `scikit-learn`.
-- Interpret top-weighted terms per document.
+A hands-on Python activity for teaching TF-IDF and cosine similarity using ten
+long-text documents.
+
+## Learning objectives
+
+- Explain term frequency, inverse document frequency, and TF-IDF.
+- Build and inspect a TF-IDF matrix with scikit-learn.
+- Interpret the highest-weighted terms per document.
 - Rank documents against a query using cosine similarity.
-- Discuss limitations of TF-IDF (no semantics, no word order).
+- Inspect NLTK stopword removal and query-term weights.
 
-## 🗂️ Repository Contents
+## Repository contents
 
 | Path | Purpose |
-|------|---------|
-| `data/documents.py` | 10 long-text documents + titles |
-| `src/load_data.py` | Loads documents into a list |
-| `src/tfidf_utils.py` | Reusable TF-IDF + similarity functions |
-| `src/run_activity.py` | End-to-end runnable script |
-| `notebooks/tfidf_activity.ipynb` | Interactive student notebook |
-| `tests/` | Basic unit tests |
-| `task_to_do.txt` | Students task to be performed |
+|---|---|
+| `data/documents.py` | Ten documents and their titles |
+| `src/load_data.py` | Loads the documents |
+| `src/tfidf_utils.py` | TF-IDF and similarity utilities |
+| `src/run_activity.py` | End-to-end analysis and detailed output |
+| `tests/` | Unit tests |
+| `ISSUES.md` | Findings from the supplied workspace and their status |
+| `TFIDF_RESULTS.md` | Verified output for the requested query |
 
-## ⚙️ Setup
+## Setup
 
-### Option 1: Local (recommended)
-```bash
-git clone https://github.com/<your-username>/tfidf-class-activity.git
-cd tfidf-class-activity
+```powershell
+git clone https://github.com/mateenyaqoob/unstructuredata_tfidf_repo.git
+cd unstructuredata_tfidf_repo
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m nltk.downloader stopwords
+```
+
+## Run the activity
+
+```powershell
+python -m src.run_activity
+```
+
+The script verifies the document count and lengths, prints NLTK stopword and token
+counts, reports the TF-IDF matrix and top terms, ranks the query results, and
+shows the top document's query-term frequencies, IDF weights, and TF-IDF scores.
+See [TFIDF_RESULTS.md](./TFIDF_RESULTS.md) for the verified result.
+
+## Run tests
+
+```powershell
+python -m pytest -q
+```
