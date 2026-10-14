@@ -18,9 +18,8 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
-from src.load_data import load_documents
+from src.load_data import titles, documents
 
-titles, documents = load_documents()
 print(f"{len(documents)} documents loaded.")
 for t, d in zip(titles, documents):
     print(f"  - {t}: {len(d.split())} words")
@@ -71,24 +70,28 @@ for t in titles:
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-def rank_documents(query: str):
-    """Print documents ranked by cosine similarity to the query."""
+def rank_documents(query: str, verbose: bool = True):
+    """Return [(title, score)] ranked by cosine similarity to the query (desc)."""
     query_vec = vectorizer.transform([query])
     scores = cosine_similarity(query_vec, X).flatten()
     ranking = sorted(zip(titles, scores), key=lambda x: x[1], reverse=True)
-    print(f"\n=== Query: {query!r} ===")
-    for title, score in ranking:
-        print(f"  {title:<25s} {score:.3f}")
+    if verbose:
+        print(f"\n=== Query: {query!r} ===")
+        for title, score in ranking:
+            print(f"  {title:<25s} {score:.3f}")
+    return ranking
 
 
 # %%
-queries = [
-    "renewable energy and climate policy",
-    "password security and phishing",
-    "healthy sleep exercise and diet",
-]
-for q in queries:
-    rank_documents(q)
+expected_top = {
+    "renewable energy and climate policy": "Climate Change",
+    "password security and phishing": "Cybersecurity",
+    "healthy sleep exercise and diet": "Public Health",
+}
+for q, expected in expected_top.items():
+    top_title = rank_documents(q)[0][0]
+    assert top_title == expected, f"{q!r}: expected {expected!r}, got {top_title!r}"
+    print(f"  -> OK: {expected!r} ranked first")
 
 # %% [markdown]
 # ## Challenge
@@ -112,8 +115,19 @@ vectorizer_v2 = TfidfVectorizer(
     min_df=2,
 )
 X_v2 = vectorizer_v2.fit_transform(documents)
-print("v2 Matrix shape:", X_v2.shape)
+print("\nv2 Matrix shape:", X_v2.shape)
+print("v1 Vocabulary size:", len(vectorizer.get_feature_names_out()))
 print("v2 Vocabulary size:", len(vectorizer_v2.get_feature_names_out()))
+
+df_v2 = pd.DataFrame(
+    X_v2.toarray(),
+    columns=vectorizer_v2.get_feature_names_out(),
+    index=titles,
+)
+print("\nTop 5 v2 (unigram + bigram) terms per document:")
+for t in titles:
+    top5 = df_v2.loc[t].sort_values(ascending=False).head(5)
+    print(f"  {t}: {', '.join(top5.index)}")
 
 # %% [markdown]
 # ## Exit ticket
