@@ -1,14 +1,7 @@
 """End-to-end walkthrough of the TF-IDF 30-minute class activity."""
-from src.load_data import load_documents
-from src.tfidf_utils import (
-    build_tfidf,
-    to_dataframe,
-    top_terms_per_document,
-    rank_documents_for_query,
-)
 
 
-def main() -> None:
+def main() -> None: 
     titles, documents = load_documents()
     print(f"Loaded {len(documents)} documents.\n")
 
