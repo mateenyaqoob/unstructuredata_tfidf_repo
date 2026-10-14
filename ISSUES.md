@@ -11,6 +11,7 @@ syntax; the first two findings applied only to the supplied workspace snapshot.
 | NLTK's `word_tokenize` required `punkt_tab`, which was not installed. | Calling that tokenizer raised an NLTK `LookupError`. | The activity uses NLTK's `TreebankWordTokenizer`, which avoids this additional tokenizer-data requirement. |
 | NLTK was missing from the supplied workspace's dependency list. | A fresh install would not include the package needed for stopword analysis. | Added `nltk>=3.8.0` to the project requirements. The README documents downloading NLTK's English stopwords corpus. |
 | Pytest was not installed in the active environment at the first test run. | `python -m pytest -q` could not start. | Installed in the active environment; this was an environment setup issue, not an application defect. |
+| The upstream Labeler workflow references `.github/labeler.yml`, which is absent. | The `label` GitHub Actions check fails with a 404 on pull requests. | Tracked separately in [upstream issue #5](https://github.com/mateenyaqoob/unstructuredata_tfidf_repo/issues/5); not changed in this TF-IDF activity PR. |
 
 ## Verification
 
