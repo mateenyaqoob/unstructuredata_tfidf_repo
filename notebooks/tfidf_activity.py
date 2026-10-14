@@ -124,3 +124,29 @@ print("v2 Vocabulary size:", len(vectorizer_v2.get_feature_names_out()))
 # %%
 if __name__ == "__main__":
     print("\nActivity complete.")
+
+
+# %% ----------------------------------------------------------------
+# Student Submission
+# Student: Hassaan0987
+# Date: 2026-10-14
+#
+# Findings:
+# - 10 documents loaded, each >30 words
+# - TF-IDF matrix built successfully with stop_words="english"
+# - Top terms per document extracted
+# - Query "renewable energy and climate policy" -> Climate Change ranked #1
+# - Query "password security and phishing" -> Cybersecurity ranked #1
+# - Query "healthy sleep exercise and diet" -> Public Health ranked #1
+# - v2 vectorizer (bigrams, max_df=0.8, min_df=2) reduced vocabulary and
+#   produced more meaningful multi-word terms.
+#
+# Exit Ticket Answers:
+# 1. High TF-IDF means the term is frequent in this document but rare
+#    across all documents -> good keyword for that document.
+# 2. IDF reduces weight of common words because they appear in almost
+#    every document, so they carry little discriminative information.
+# 3. Real-world uses: search engines, document similarity, spam filtering,
+#    recommendation systems, keyword extraction.
+# ----------------------------------------------------------------
+print("Task completed by Hassaan0987")
