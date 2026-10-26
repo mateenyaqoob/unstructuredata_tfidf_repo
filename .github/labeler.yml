@@ -1,0 +1,3 @@
+# Dummy labeler config
+documentation:
+  - '*.md'
