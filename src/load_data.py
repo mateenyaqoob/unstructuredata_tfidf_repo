@@ -1,7 +1,7 @@
 """Utilities for loading the classroom dataset."""
 from typing import List, Tuple
 
-from data.documents import TITLES, DOCUMENTS
+from unstructuredata_tfidf_repo.data.documents import TITLES, DOCUMENTS
 
 
 def load_documents() -> Tuple[List[str], List[str]]:
