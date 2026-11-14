@@ -1,0 +1,85 @@
+TF-IDF Activity - Issues Encountered
+====================================
+
+1. Original code used pandas DataFrames
+   Problem: The repo's tfidf_utils.py and the notebook converted the TF-IDF
+   matrix into a pandas DataFrame, but the task had to be done without
+   DataFrames.
+   Fix: Printed the matrix sample and top terms using NumPy and plain loops.
+
+2. NLTK data not available at first
+   Problem: NLTK stopwords and WordNet are not installed with the library.
+   Calling stopwords.words('english') or the lemmatizer without them gives
+   a LookupError.
+   Fix: Added nltk.download('stopwords'), nltk.download('wordnet') and
+   nltk.download('omw-1.4') in the setup cell.
+
+3. WordNet was downloaded but still "not found"
+   Problem: WordNet is saved as wordnet.zip, so checking for
+   'corpora/wordnet' failed and the lemmatizer was skipped. Words like
+   "doctors" were not changed to "doctor".
+   Fix: Checked for both 'corpora/wordnet' and 'corpora/wordnet.zip'.
+
+4. Short words were removed by mistake
+   Problem: The first version dropped all words with 2 letters or less,
+   which removed "ai", an important word in the AI in Healthcare document.
+   Fix: Only drop single-letter words.
+
+5. pytest ran with a different Python
+   Problem: Running "pytest -q" used a Python install that did not have
+   numpy, so the tests failed to import.
+   Fix: Ran the tests with "python -m pytest -q" so the same Python is used.
+
+6. Notebook failed when run a second time
+   Problem: The setup cell runs git clone. On a second "Run all" in Colab
+   the folder already exists and git clone gives an error.
+   Fix: Only clone if the folder is not there:
+   ![ -d unstructuredata_tfidf_repo ] || git clone ...
+
+7. Scores printed as np.float64(...)
+   Problem: Top terms from the sklearn matrix printed like
+   ('ai', np.float64(0.366)) which is hard to read.
+   Fix: Converted the scores with float() before rounding.
+
+8. Lemmatizer changes "Mars" to "mar"
+   Problem: WordNetLemmatizer treats "mars" as a plural, so the Space
+   Exploration document shows "mar" in its top words.
+   Status: Not fixed. This is a limitation of the lemmatizer, not a bug in
+   the code.
+
+9. Manual TF-IDF and sklearn TF-IDF give different scores
+   Problem: The top words from my own TF x IDF calculation are a bit
+   different from sklearn's.
+   Reason: sklearn uses smooth idf = ln((1 + N) / (1 + df)) + 1 and
+   normalizes each row, my version uses idf = log(N / df).
+   Check: Using sklearn's formula with my df values gave the same idf for
+   all 527 words (0 mismatches).
+
+10. Word counts differ by one in one document
+    Problem: Italian Pasta shows 91 words with split() but 92 words with
+    the NLTK tokenizer.
+    Reason: The two methods split some words differently (punctuation and
+    hyphens). Not an error.
+
+11. Bigram settings removed most useful words
+    Problem: With ngram_range=(1, 2), max_df=0.8, min_df=2 the vocabulary
+    dropped from 527 to 76 and only 2 bigrams were kept
+    ("economic growth", "policy involves").
+    Reason: min_df=2 removes any word found in only one document, which
+    are exactly the words that make each document unique. With only 10
+    short documents, bigrams did not make the top terms more meaningful.
+
+12. Repo tests still use the original pandas code
+    Problem: The provided pytest tests import the repo's own tfidf_utils.py,
+    which imports pandas.
+    Status: The tests pass (3 passed). My NLTK version is checked separately
+    with assert statements in the last cell, and those also pass.
+
+Final result
+------------
+- All 10 documents loaded, each more than 30 words
+- TF-IDF matrix shape: (10, 527)
+- "renewable energy and climate policy" -> Climate Change
+- "password security and phishing" -> Cybersecurity
+- "healthy sleep exercise and diet" -> Public Health
+- pytest: 3 passed
