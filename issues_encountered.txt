@@ -1,0 +1,94 @@
+TF-IDF Class Activity - Issues Encountered and How I Fixed Them
+=================================================================
+
+Overview
+--------
+While completing the TF-IDF activity (dynamic data loading, NLTK stopword
+removal, TF-IDF matrix, query similarity, and per-word occurrence counts), I
+ran into several errors and made a few design decisions that are worth
+documenting. All of them are now resolved. The final notebook runs cleanly
+and the provided test suite passes.
+
+
+Issues and Fixes
+----------------
+
+1. NameError: name 'TITLES' is not defined
+   Problem: The stopword-removal cell failed because the setup cell had not
+            been run, or had failed silently, in the current Colab runtime.
+   Fix:     Merged the clone, install, NLTK download, and dynamic load of
+            data/documents.py into one single cell. Also added a guard at the
+            top of the next cell:
+            assert "TITLES" in globals() and "DOCUMENTS" in globals(), \
+                "Run the SETUP+LOAD cell first!"
+
+2. git clone fails when the folder already exists
+   Problem: Re-running "!git clone ..." gave "fatal: destination path ...
+            already exists", and "%cd" ended up in the wrong directory after
+            a kernel restart.
+   Fix:     Wrapped the clone in a Python check and replaced "%cd" with
+            os.chdir(REPO_DIR), so the cell can be safely re-run.
+
+3. data/documents.py not found
+   Problem: importlib could not locate the dataset because the working
+            directory was not the repo root.
+   Fix:     Built an absolute path from REPO_ROOT, added an assertion that
+            prints os.listdir(REPO_ROOT) if the file is missing, and loaded
+            the module using spec_from_file_location.
+
+4. Documents were hardcoded at first
+   Problem: My first draft pasted the 10 documents directly into the
+            notebook, which goes against the requirement to load the .py file.
+   Fix:     Removed all hardcoded text. The notebook now loads TITLES and
+            DOCUMENTS dynamically, so any change in data/documents.py is
+            picked up automatically.
+
+5. Stopword removal was not visible
+   Problem: I used TfidfVectorizer(stop_words="english"), so the removed
+            words were never shown, even though the task asked for them.
+   Fix:     Removed stopwords manually using NLTK plus punctuation removal,
+            printed the removed words for each document, added a top-15
+            summary using collections.Counter, and fitted the vectorizer on
+            the cleaned text (stop_words=None).
+
+6. "Basketball Strategy" scored above 0 for an unrelated query
+   Problem: For the query "renewable energy and climate policy", Basketball
+            Strategy got a score of 0.0628 even though it shares no content
+            words with the query.
+   Cause:   The vectorizer was fitted on the raw documents, so both texts
+            shared the stopword "and".
+   Fix:     Refitted the vectorizer on documents_no_stop. The similarity is
+            now 0.0000, the ranking is cleaner, and Climate Change still
+            ranks first.
+
+7. Missing per-word occurrence counts
+   Problem: The task asked for the number of times each query word occurs,
+            but my original function only returned similarity scores.
+   Fix:     Added a query_word_occurrences() helper that prints the raw
+            tokens, the stopword-filtered tokens, the counts inside the
+            query, a per-document count matrix, and the totals across all 10
+            documents. It is run for all three predefined queries.
+
+8. Smart quotes broke copy-paste
+   Problem: Pasting code from a rich-text editor into Colab replaced normal
+            quotes with curly quotes, which caused a SyntaxError.
+   Fix:     Kept all source code in plain ASCII and used emojis only inside
+            print() strings.
+
+9. Verifying the corpus
+   Problem: I needed an automatic way to confirm that exactly 10 long
+            documents were loaded.
+   Fix:     Added assertions right after loading:
+            assert len(DOCUMENTS) == len(TITLES)
+            assert len(DOCUMENTS) == 10
+            assert all(len(d.split()) > 30 for d in DOCUMENTS)
+
+
+Final Status
+------------
+- 10 documents loaded dynamically from data/documents.py
+- Stopwords removed with NLTK and printed for each document
+- TF-IDF matrix built and inspected as a DataFrame, with the top 5 terms
+  per document
+- Query similarity and per-word occurrence counts work for all 3 queries
+- pytest -q -> 3 passed
